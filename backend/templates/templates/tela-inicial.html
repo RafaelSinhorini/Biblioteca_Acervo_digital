@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Acervo Digital - Tela Inicial</title>
+
+	<!-- CSS do projeto -->
+	<link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;700&display=swap" rel="stylesheet">
+	
+	<!-- Biblioteca de animação -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body class="tela-inicial">
+	<div class="container">
+
+		<!-- TOPO -->
+		<div class="topo">
+			<h1 class="animate__animated animate__fadeInDown"><span style="color: #ec5b5b;">ACERVO</span> DIGITAL</h1>
+			<a href="{{ url_for('login') }}" class="link-login animate__animated animate__fadeInRight">LOGIN&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;ÁREA RESTRITA</a>
+		</div>
+
+		<!-- MEIO -->
+		<div class="meio">
+			<p id="texto-digitacao" class="mensagem-central">
+				<!-- O texto será inserido via JavaScript com efeito de digitação -->
+			</p>
+		</div>
+
+		<!-- RODAPÉ -->
+		<div class="rodape">
+			Desenvolvido por: Alunos UNIVESP – Todos os direitos autorais reservados.
+		</div>
+
+	</div>
+<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			// Efeito de digitação para o texto principal
+			const textoCompleto = [
+				"Com o ACERVO DIGITAL o seu",
+				"trabalho acadêmico ganha",
+				"visibilidade.",
+				"Faça parte de uma rede com",
+				"milhares de alunos."
+			];
+			const elementoTexto = document.getElementById('texto-digitacao');
+			let linhaAtual = 0;
+			let caracterAtual = 0;
+			let textoAtual = '';
+			let isDigitando = true;
+			
+			function digitarTexto() {
+				if (linhaAtual < textoCompleto.length) {
+					if (caracterAtual < textoCompleto[linhaAtual].length) {
+						textoAtual += textoCompleto[linhaAtual].charAt(caracterAtual);
+						elementoTexto.innerHTML = textoAtual + '<span class="cursor">|</span>';
+						caracterAtual++;
+						setTimeout(digitarTexto, 50); // Velocidade da digitação
+					} else {
+						textoAtual += '<br>';
+						linhaAtual++;
+						caracterAtual = 0;
+						setTimeout(digitarTexto, 500); // Pausa entre linhas
+					}
+				} else {
+					// Remove o cursor quando terminar
+					elementoTexto.innerHTML = textoAtual.replace('<span class="cursor">|</span>', '');
+				}
+			}
+			
+			// Inicia o efeito de digitação após um pequeno delay
+			setTimeout(digitarTexto, 500);
+			
+			// Efeito de brilho para o botão LOGIN / ÁREA RESTRITA
+			const loginLink = document.querySelector('.link-login');
+			
+			// Adiciona classe para animação de brilho
+			function adicionarBrilho() {
+				loginLink.classList.add('botao-brilhando');
+				setTimeout(removerBrilho, 1500);
+			}
+			
+			function removerBrilho() {
+				loginLink.classList.remove('botao-brilhando');
+				setTimeout(adicionarBrilho, 1500);
+			}
+			
+			// Inicia a animação de brilho após o texto terminar
+			setTimeout(adicionarBrilho, 6000);
+			
+			// Mantém os efeitos de hover existentes
+			loginLink.addEventListener('mouseenter', function() {
+				this.classList.add('animate__animated', 'animate__pulse');
+			});
+			loginLink.addEventListener('mouseleave', function() {
+				this.classList.remove('animate__animated', 'animate__pulse');
+			});
+			
+			// Animação para o título
+			const titulo = document.querySelector('h1');
+			titulo.addEventListener('mouseenter', function() {
+				this.classList.add('animate__animated', 'animate__headShake');
+			});
+			titulo.addEventListener('mouseleave', function() {
+				this.classList.remove('animate__animated', 'animate__headShake');
+			});
+		});
+	</script>
+	
+	<style>
+		/* Estilo para o cursor de digitação */
+		.cursor {
+			animation: piscar 0.7s infinite;
+		}
+		
+		@keyframes piscar {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0; }
+		}
+		
+		/* Estilo para o efeito de brilho no botão */
+		.botao-brilhando {
+			animation: brilho 1.5s infinite;
+		}
+		
+		@keyframes brilho {
+			0% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+			50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(236, 91, 91, 0.6); }
+			100% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+		}
+	</style>
+</body>
+</html>

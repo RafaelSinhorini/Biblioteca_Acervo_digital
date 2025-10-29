@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Acervo Digital - Recuperação de Senha</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+	<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="tela-login">
+	<div class="container">
+
+		<!-- TOPO -->
+		<div class="topo">
+			<h1><span style="color: #ec5b5b;">ACERVO</span> DIGITAL</h1>
+		</div>
+
+		<!-- MEIO -->
+		<div class="meio">
+			<div class="formulario-login">
+				<h4>Recuperação de Senha</h4>
+				{% with messages = get_flashed_messages() %}
+					{% if messages %}
+						<div class="mensagens">
+							{% for message in messages %}
+								<p class="mensagem-alerta">{{ message }}</p>
+							{% endfor %}
+						</div>
+					{% endif %}
+				{% endwith %}
+
+				{% if step == 'solicitar' %}
+				<!-- Etapa 1: Solicitar recuperação -->
+				<form action="{{ url_for('recuperar_senha') }}" method="POST">
+					<label for="email">E-mail</label>
+					<input type="email" id="email" name="email" required>
+					
+					<input type="hidden" name="step" value="solicitar">
+					<button type="submit">Gerar Token</button>
+				</form>
+				{% elif step == 'mostrar_token' %}
+				<!-- Etapa 2: Mostrar token gerado -->
+				<div class="token-container">
+					<p>Seu token de recuperação foi gerado:</p>
+					<div class="token-display">
+						<span id="token-value">{{ token }}</span>
+						<button onclick="copiarToken()" class="copy-button">Copiar</button>
+					</div>
+					<p class="token-info">Este token é válido até {{ valido_ate.strftime('%d/%m/%Y %H:%M') }}</p>
+					<p class="token-warning">Guarde este token em um local seguro. Ele não será exibido novamente.</p>
+				</div>
+				<form action="{{ url_for('recuperar_senha') }}" method="POST">
+					<input type="hidden" name="step" value="verificar">
+					<input type="hidden" name="email" value="{{ email }}">
+					<input type="hidden" name="token" value="{{ token }}">
+					<button type="submit">Continuar para redefinição de senha</button>
+				</form>
+				<script>
+					function copiarToken() {
+						var tokenValue = document.getElementById('token-value');
+						var tempInput = document.createElement('input');
+						tempInput.value = tokenValue.textContent;
+						document.body.appendChild(tempInput);
+						tempInput.select();
+						document.execCommand('copy');
+						document.body.removeChild(tempInput);
+						alert('Token copiado para a área de transferência!');
+					}
+				</script>
+			{% elif step == 'verificar' %}
+				<!-- Etapa 3: Verificar token -->
+				<form action="{{ url_for('recuperar_senha') }}" method="POST">
+					<label for="token">Token de Recuperação</label>
+					<input type="text" id="token" name="token" required>
+					
+					<input type="hidden" name="step" value="verificar">
+					<input type="hidden" name="email" value="{{ email }}">
+					<button type="submit">Verificar Token</button>
+				</form>
+				{% elif step == 'redefinir' %}
+				<!-- Etapa 3: Redefinir senha -->
+				<form action="{{ url_for('recuperar_senha') }}" method="POST">
+					<label for="nova_senha">Nova Senha</label>
+					<input type="password" id="nova_senha" name="nova_senha" required>
+					
+					<label for="confirmar_senha">Confirmar Senha</label>
+					<input type="password" id="confirmar_senha" name="confirmar_senha" required>
+					
+					<input type="hidden" name="step" value="redefinir">
+					<input type="hidden" name="email" value="{{ email }}">
+					<input type="hidden" name="token" value="{{ token }}">
+					<button type="submit">Redefinir Senha</button>
+				</form>
+				{% endif %}
+
+				<p class="link-criar-conta">
+					<a href="{{ url_for('login') }}">Voltar para o login</a>
+				</p>
+			</div>
+		</div>
+
+		<!-- RODAPÉ -->
+		<div class="rodape">
+			Desenvolvido por: Alunos UNIVESP – Todos os direitos autorais reservados.
+		</div>
+
+	</div>
+</body>
+</html>

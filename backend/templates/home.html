@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home do Sistema</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+
+  </head>
+<body class="tela-home">
+  <div class="container">
+    <!-- TOPO -->
+    <div class="topo">
+     <h1>
+      <a href="{{ url_for('tela_inicial') }}" class="link-logo">
+        <span class="texto-normal">
+        <span style="color: #ec5b5b;">ACERVO</span> DIGITAL
+        </span>
+        <span class="texto-hover">SAIR DO SISTEMA</span>
+      </a>
+    </h1>
+
+
+      <!-- Botão visível apenas para docentes -->
+      <a href="{{ url_for('cadastrar_trabalho') }}" class="btn-cadastrar-trabalho">Cadastrar Trabalho</a>
+
+    </div>
+
+<!-- ÁREA DE BUSCA -->
+<div class="meio">
+    <form class="form-busca-home" action="{{ url_for('home') }}" method="GET">
+      <div class="campo">
+        <label for="titulo">Título: (digite o nome do trabalho)</label>
+        <input type="text" id="titulo" name="titulo" value="{{ request.args.get('titulo', '') }}">
+      </div>
+  
+      <div class="campo">
+        <label for="turma">Turma:</label>
+        <input type="text" id="turma" name="turma" value="{{ request.args.get('turma', '') }}">
+      </div>
+  
+      <div class="campo">
+        <label for="modalidade">Modalidade: (escolha uma opção)</label>
+        <select id="modalidade" name="modalidade">
+          <option value="">Selecione</option>
+          <option value="tecnico" {% if request.args.get('modalidade') == 'tecnico' %}selected{% endif %}>Curso Técnico</option>
+          <option value="medio" {% if request.args.get('modalidade') == 'medio' %}selected{% endif %}>Ensino Médio</option>
+          <option value="qualificacao" {% if request.args.get('modalidade') == 'qualificacao' %}selected{% endif %}>Qualificação Profissional</option>
+        </select>
+      </div>
+  
+      <div class="campo">
+        <label for="curso">Curso: (escolha uma opção)</label>
+        <select id="curso" name="curso">
+          <option value="">Selecione</option>
+          <option value="administracao" {% if request.args.get('curso') == 'administracao' %}selected{% endif %}>Administração</option>
+          <option value="enfermagem" {% if request.args.get('curso') == 'enfermagem' %}selected{% endif %}>Enfermagem</option>
+          <option value="logistica" {% if request.args.get('curso') == 'logistica' %}selected{% endif %}>Logística</option>
+          <option value="informatica" {% if request.args.get('curso') == 'informatica' %}selected{% endif %}>Informática</option>
+          <option value="design" {% if request.args.get('curso') == 'design' %}selected{% endif %}>Design de Interiores</option>
+          <option value="estetica" {% if request.args.get('curso') == 'estetica' %}selected{% endif %}>Estética</option>
+          <option value="podologia" {% if request.args.get('curso') == 'podologia' %}selected{% endif %}>Podologia</option>
+          <option value="teatro" {% if request.args.get('curso') == 'teatro' %}selected{% endif %}>Teatro</option>
+        </select>
+      </div>
+  
+      <!-- Botão Buscar Trabalhos -->
+      <div class="buscar-trabalhos-container">
+        <button type="submit" class="btn-buscar-trabalhos">BUSCAR TRABALHOS</button>
+      </div>
+    </form>
+  </div> <!-- FIM DA DIV MEIO-->
+</div> <!-- Fim da div.meio -->
+
+<!-- Seta piscando para indicar rolagem -->
+{% if filtros_ativos and trabalhos %}
+<div id="seta-rolagem" class="seta-rolagem">
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 17L12 7" stroke="#ec5b5b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M7 12L12 17L17 12" stroke="#ec5b5b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</div>
+{% endif %}
+
+<!-- RESULTADOS DA BUSCA -->
+<div class="resultado-busca">
+  {% if trabalhos %}
+    <h2>Trabalhos Encontrados: {{ trabalhos|length }}</h2>
+    <ul class="lista-trabalhos">
+      {% for trabalho in trabalhos %}
+        <li class="item-trabalho">
+          <h3>{{ trabalho.titulo }}</h3>
+          <p><strong>Curso:</strong> {{ trabalho.curso }}</p>
+          <p><strong>Status:</strong> {{ trabalho.status }}</p>
+          <p><strong>Descrição:</strong> {{ trabalho.descricao }}</p>
+          <p>
+            <a href="{{ url_for('apresentar_trabalho', trabalho_id=trabalho.id) }}" target="_blank" class="btn-acessar">ACESSAR TRABALHO</a>
+          </p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Nenhum trabalho encontrado.</p>
+  {% endif %}
+</div>
+
+<!-- Estilos e scripts para a seta de rolagem -->
+<style>
+  .btn-acessar {
+    display: inline-block;
+    background-color: #ec5b5b;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-acessar:hover {
+    background-color: #d64545;
+  }
+
+  .seta-rolagem {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: piscar 1s infinite, bounce 2s infinite;
+    z-index: 1000;
+  }
+  
+  @keyframes piscar {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
+  }
+</style>
+
+<script>
+  // Script para esconder a seta quando o usuário rolar a página
+  document.addEventListener('DOMContentLoaded', function() {
+    const setaRolagem = document.getElementById('seta-rolagem');
+    
+    if (setaRolagem) {
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 100) {
+          setaRolagem.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>
+
+
