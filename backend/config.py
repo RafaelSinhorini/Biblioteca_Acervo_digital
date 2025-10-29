@@ -9,7 +9,7 @@ def _normalize_db_url(url: str) -> str:
 
 
 # URL padrão do Railway (pode ser sobrescrita por variáveis de ambiente)
-RAILWAY_DB_URL = "mysql://root:PMdlxllXwlmqeXqMTTJNtOdLIRLXBtaK@maglev.proxy.rlwy.net:38829/railway"
+RAILWAY_DB_URL = "mysql://root:PMdlxllXwlmqeXqMTTJNtOdLIRLXBtaK@maglev.proxy.rlwy.net:38829/acervo_digital"
 
 # Prioriza variáveis de ambiente fornecidas pelo Railway
 DB_URL = (
