@@ -430,15 +430,17 @@ def limpar_tokens_expirados():
 # Inicializar o banco de dados
 # Removido @app.before_first_request conforme Flask 3.x
 
-if __name__ == '__main__':
-    # Verificar se o diretório de uploads existe, se não, criar
-    if not os.path.exists(app.config['UPLOAD_FOLDER']):
-        os.makedirs(app.config['UPLOAD_FOLDER'])
-    
+if __name__ == "__main__":
+    # Verificar se o diretório de uploads existe; se não, criar
+    if not os.path.exists(app.config["UPLOAD_FOLDER"]):
+        os.makedirs(app.config["UPLOAD_FOLDER"])
+
     # Verificar o formato das senhas existentes
     verificar_formato_senhas()
-    
-    app.run(debug=True)
+
+    # Porta dinâmica do Railway; padrão 5000 para ambiente local
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
 
 
 
